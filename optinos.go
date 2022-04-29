@@ -2,6 +2,7 @@ package xxl
 
 import (
 	"github.com/go-basic/ipv4"
+	"github.com/xxl-job/xxl-job-executor-go/log"
 	"time"
 )
 
@@ -13,8 +14,7 @@ type Options struct {
 	ExecutorPort string        `json:"executor_port"` //本地(执行器)端口
 	RegistryKey  string        `json:"registry_key"`  //执行器名称
 	LogDir       string        `json:"log_dir"`       //日志目录
-
-	l Logger //日志处理
+	l            log.Logger    //日志处理
 }
 
 func newOptions(opts ...Option) Options {
@@ -29,9 +29,8 @@ func newOptions(opts ...Option) Options {
 	}
 
 	if opt.l == nil {
-		opt.l = &logger{}
+		opt.l = log.New(nil)
 	}
-
 	return opt
 }
 
@@ -78,7 +77,7 @@ func RegistryKey(registryKey string) Option {
 }
 
 // SetLogger 设置日志处理器
-func SetLogger(l Logger) Option {
+func SetLogger(l log.Logger) Option {
 	return func(o *Options) {
 		o.l = l
 	}

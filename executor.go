@@ -3,8 +3,8 @@ package xxl
 import (
 	"context"
 	"encoding/json"
+	"github.com/xxl-job/xxl-job-executor-go/log"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -57,7 +57,7 @@ type executor struct {
 	regList *taskList //注册任务列表
 	runList *taskList //正在执行任务列表
 	mu      sync.RWMutex
-	log     Logger
+	log     log.Logger
 
 	logHandler LogHandler //日志查询handler
 }
@@ -131,7 +131,7 @@ func (e *executor) runTask(writer http.ResponseWriter, request *http.Request) {
 		e.log.Error("参数解析错误:" + string(req))
 		return
 	}
-	e.log.Info("任务参数:%v", param)
+	e.log.Infof("任务参数:%v", param)
 	if !e.regList.Exists(param.ExecutorHandler) {
 		_, _ = writer.Write(returnCall(param, 500, "Task not registered"))
 		e.log.Error("任务[" + Int64ToStr(param.JobID) + "]没有注册:" + param.ExecutorHandler)
@@ -207,7 +207,7 @@ func (e *executor) taskLog(writer http.ResponseWriter, request *http.Request) {
 		reqErrLogHandler(writer, req, err)
 		return
 	}
-	e.log.Info("日志请求参数:%+v", req)
+	e.log.Infof("日志请求参数:%+v", req)
 	if e.logHandler != nil {
 		res = e.logHandler(req)
 	} else {
@@ -240,7 +240,7 @@ func (e *executor) idleBeat(writer http.ResponseWriter, request *http.Request) {
 		e.log.Error("idleBeat任务[" + Int64ToStr(param.JobID) + "]正在运行")
 		return
 	}
-	e.log.Info("忙碌检测任务参数:%v", param)
+	e.log.Infof("忙碌检测任务参数:%v", param)
 	_, _ = writer.Write(returnGeneral())
 }
 
@@ -314,12 +314,12 @@ func (e *executor) callback(task *Task, code int64, msg string) {
 	e.runList.Del(Int64ToStr(task.Id))
 	res, err := e.post("/api/callback", string(returnCall(task.Param, code, msg)))
 	if err != nil {
-		e.log.Error("callback err : ", err.Error())
+		e.log.Errorf("callback err : %v", err.Error())
 		return
 	}
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		e.log.Error("callback ReadAll err : ", err.Error())
+		e.log.Errorf("callback ReadAll err :%v ", err.Error())
 		return
 	}
 	e.log.Info("任务回调成功:" + string(body))
