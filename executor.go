@@ -3,6 +3,7 @@ package xxl
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/xxl-job/xxl-job-executor-go/log"
 	"io/ioutil"
 	"net/http"
@@ -163,8 +164,11 @@ func (e *executor) runTask(writer http.ResponseWriter, request *http.Request) {
 	task.Id = param.JobID
 	task.Name = param.ExecutorHandler
 	task.Param = param
-	task.log = e.log
-
+	// 初始化任务日志，并记录对应数据
+	logOption := log.NewOptions()
+	logOption.LogFileDir = e.opts.LogDir
+	logOption.InfoFileName = fmt.Sprintf("%v.log", param.LogID)
+	task.log = log.New(logOption)
 	e.runList.Set(Int64ToStr(task.Id), task)
 	go task.Run(func(code int64, msg string) {
 		e.callback(task, code, msg)

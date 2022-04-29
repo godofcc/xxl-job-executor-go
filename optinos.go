@@ -76,6 +76,12 @@ func RegistryKey(registryKey string) Option {
 	}
 }
 
+func SetLogDir(logDir string) Option {
+	return func(o *Options) {
+		o.LogDir = logDir
+	}
+}
+
 // SetLogger 设置日志处理器
 func SetLogger(l log.Logger) Option {
 	return func(o *Options) {

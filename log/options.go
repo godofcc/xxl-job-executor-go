@@ -43,6 +43,7 @@ func NewOptions() *Options {
 		LogFileDir:        "",
 		AppName:           "app",
 		InfoFileName:      "info.log",
+		ErrorFileName:     "err.log",
 		Level:             zapcore.InfoLevel.String(),
 		DisableCaller:     false,
 		DisableStacktrace: false,

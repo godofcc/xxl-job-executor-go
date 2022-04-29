@@ -218,8 +218,8 @@ func New(option *Options) *zapLogger {
 		if er != nil {
 			os.MkdirAll(option.LogFileDir, 0777)
 		}
-		info_log = path.Join(option.LogFileDir, fmt.Sprintf("%v-%v", option.AppName, option.InfoFileName))
-		err_log = path.Join(option.LogFileDir, fmt.Sprintf("%v-%v", option.AppName, option.ErrorFileName))
+		info_log = path.Join(option.LogFileDir, fmt.Sprintf("%v", option.InfoFileName))
+		err_log = path.Join(option.LogFileDir, fmt.Sprintf("%v", option.ErrorFileName))
 		option.OutputPaths = append(option.OutputPaths, info_log)
 		option.ErrorOutputPaths = append(option.ErrorOutputPaths, err_log)
 	}
